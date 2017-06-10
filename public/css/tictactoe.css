@@ -1,0 +1,27 @@
+#tictactoe {
+    width: 600px;
+    height: 600px;
+    margin: 20px;
+}
+
+.circle {
+    background-image: url("../img/circle.png");
+    background-size: 100% 100%;
+}
+
+.cross {
+    background-image: url("../img/cross.png");
+    background-size: 100% 100%;
+}
+
+.circle {
+
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+th:hover {
+    background-color:#9999FF
+}

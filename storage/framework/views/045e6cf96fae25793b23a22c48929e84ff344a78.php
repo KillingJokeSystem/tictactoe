@@ -13,6 +13,8 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="<?php echo e(URL::to('css/tictactoe.css')); ?>">
+
     <?php /* <link href="<?php echo e(elixir('css/app.css')); ?>" rel="stylesheet"> */ ?>
 
     <style>
@@ -40,7 +42,7 @@
 
                 <!-- Branding Image -->
                 <a class="navbar-brand" href="<?php echo e(url('/')); ?>">
-                    Laravel
+                    TicTacToe
                 </a>
             </div>
 
@@ -48,6 +50,7 @@
                 <!-- Left Side Of Navbar -->
                 <ul class="nav navbar-nav">
                     <li><a href="<?php echo e(url('/home')); ?>">Home</a></li>
+                    <li><a href="<?php echo e(url('/game')); ?>">Game</a></li>
                 </ul>
 
                 <!-- Right Side Of Navbar -->
@@ -75,8 +78,9 @@
     <?php echo $__env->yieldContent('content'); ?>
 
     <!-- JavaScripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js" integrity="sha384-I6F5OKECLVtK/BL+8iSLDEHowSAfUo76ZL9+kGAgTRdiByINKJaqTPH/QVNS1VDb" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="<?php echo e(URL::to('js/jquery.min.js')); ?>"></script>
+    <script type="text/javascript" src="<?php echo e(URL::to('js/tictactoe.js')); ?>"></script>
     <?php /* <script src="<?php echo e(elixir('js/app.js')); ?>"></script> */ ?>
 </body>
 </html>
