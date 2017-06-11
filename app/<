@@ -1,0 +1,33 @@
+var turn = 1;
+
+function generate_table(size){
+    table='<table id="tictactoe">';
+    for (i = 0; i < size; i++) {
+	table+='<tr id="line'+i+'" class="line">';
+	for (j = 0; j < size; j++) {
+	table+='<th id="column'+j+'" class="column">';
+	table+='</th>';
+	}
+	table+='</tr>';
+    }
+    table+='</table>';
+    $("#container").append(table);
+}
+
+function select_box(box){
+    if( !$(box).hasClass("cross") & !$(box).hasClass("circle") ){
+	if( turn%2 == 1 ){
+	    $(box).addClass("cross");
+	}
+	else if ( turn%2 == 0 ){
+	    $(box).addClass("circle");
+	}
+	turn += 1;
+    }
+}
+
+generate_table(20);
+
+$( "th" ).click(function() {
+    select_box(this);
+});

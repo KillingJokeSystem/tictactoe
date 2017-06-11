@@ -21,3 +21,7 @@ Route::get('/home', 'HomeController@index');
 Route::get('/game', function(){
     return view("game");
 });
+Route::get('/move/{pos}', 'MoveController@send_position');
+Route::get('/get_game', 'MoveController@get_game');
+Route::get('/check_server', 'MoveController@check_status');
+Route::get('/create_game/{size}/{win_condition}/{turn_timeout}', 'CreationController@create_game');
