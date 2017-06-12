@@ -184,10 +184,10 @@ function set_grid_values(moves){
 }
 
 function check_grid(box){
-    if( game.turn%2 == 0 ){
+    if( game.turn%2 == 1 ){
 	$(box).addClass("cross");
     }
-    else if ( game.turn%2 == 1 ){
+    else if ( game.turn%2 == 0 ){
 	$(box).addClass("circle");
     }
 }
@@ -233,6 +233,11 @@ function end_game( winning_play ){
     else if( winning_play == 1 & player.turn == 1 ) {
 	$("#turnContainer").empty();
 	$("#turnContainer").append("<h1>You loose <a href='/game' class='quit' >Quit</a></h1>");
+	game.ended = 1;
+    }
+    else if( winning_play == -1 ) {
+	$("#turnContainer").empty();
+	$("#turnContainer").append("<h1>drawn match <a href='/game' class='quit' >Quit</a></h1>");
 	game.ended = 1;
     }
 }

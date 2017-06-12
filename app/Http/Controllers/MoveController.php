@@ -28,6 +28,7 @@ class MoveController extends Controller
 	    $ended = $this->check_winning_play( $moves, $games->grid_size, $games->win_condition );
 	    if( $ended == 1 & $is_player_turn == 1 | sizeof($moves) >= pow($games->grid_size,2) ){
 	        $res = Games::where('id', '=', $players->games_id)->update(["ended" => 1]);
+		if( sizeof($moves) >= pow($games->grid_size,2) ) $ended = -1;
 	    }
 	    else if( $ended == 1 & $is_player_turn == 0 ){
 	        $res = Players::where(['games_id' => $players->games_id, 
@@ -77,23 +78,28 @@ class MoveController extends Controller
     public function get_game(){
 	$id = Auth::id();
 	$players = Players::where('users_id', '=', $id)->orderBy('games_id', 'desc')->first();
-	$games = Games::find($players->games_id);
+	if( isset($players->games_id) ){
+	    $games = Games::find($players->games_id);
 	
-	if($games->ended == 0){
-	    $moves = Moves::where('games_id', '=', $games->id)->orderBy('turn', 'asc')->get();
-	    echo json_encode(
-		array("response" => 1, 
+	    if($games->ended == 0){
+	        $moves = Moves::where('games_id', '=', $games->id)->orderBy('turn', 'asc')->get();
+	        echo json_encode(
+		    array("response" => 1, 
 			"data" => array(
 				"game" => $games,
 				"player" => $players,
 				"moves" => $moves
 			)
-		)
-	    );
+		    )
+	        );
+	    }
+	    else {
+	        echo json_encode(array("response" => 0));
+	    }
 	}
 	else {
-	    echo json_encode(array("response" => 0));
-	}
+            echo json_encode(array("response" => 0));
+        }
     }
 
     private function check_winning_play( $moves, $size, $win_condition ){
