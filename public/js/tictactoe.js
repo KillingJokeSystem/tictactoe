@@ -9,7 +9,8 @@ var game = {
 var player = {
     id:0,
     first:0,
-    turn:0
+    turn:0,
+    lock:0
 }
 
 function InitGame(){
@@ -86,7 +87,8 @@ function check_grid(box){
 }
 
 function select_box(box){
-    if( player.turn == 1 & !$(box).hasClass("cross") & !$(box).hasClass("circle") ){
+    if( player.turn == 1 & !$(box).hasClass("cross") & !$(box).hasClass("circle") & player.lock == 0){
+	player.lock = 1;
 	x=$(box).attr("val");
 	y=$(box).parent().attr("val");
 	data=x+":"+y+";";
@@ -99,6 +101,7 @@ function select_box(box){
 		player.turn = data["is_player_turn"];
 		set_player_turn();
 		check_server();
+		player.lock = 0;
 	    }
 	});
     }
@@ -116,16 +119,14 @@ function set_player_turn(){
 }
 
 function end_game( winning_play ){
-	console.log(winning_play);
-	console.log(player.turn);
     if( winning_play == 1 & player.turn == 0 ) {
-	$("#container").empty();
-	$("#container").append("<h1>Victory</h1>");
+	$("#turnContainer").empty();
+	$("#turnContainer").append("<h1>Victory</h1>");
 	game.ended = 1;
     }
     else if( winning_play == 1 & player.turn == 1 ) {
-	$("#container").empty();
-	$("#container").append("<h1>You loose</h1>");
+	$("#turnContainer").empty();
+	$("#turnContainer").append("<h1>You loose</h1>");
 	game.ended = 1;
     }
 }
