@@ -42,7 +42,8 @@ class CreationController extends Controller
     }
 
     public function get_matchmaking($size, $win_condition, $turn_timeout){
-	$mm  = Matchmakings::where('heart_beat', '>=', date("Y-m-d H:i:s", time() - 2))
+	$mm  = Matchmakings::lockForUpdate()
+			->where('heart_beat', '>=', date("Y-m-d H:i:s", time() - 2))
 			->where('matched', '=', false)
 			->where('grid_size', '=', $size)
 			->where('win_condition', '=', $win_condition)
@@ -50,7 +51,9 @@ class CreationController extends Controller
 			->orderBy('creation_date', 'asc')->first();
 	if( isset($mm->id) ){
 	    $mm_id = $mm->id;
-	    $res = Matchmakings::where('id', '=', $mm_id)->update(["matched" => true]);
+	    $mm->matched = true;
+	    $mm->save();
+	    //$res = Matchmakings::where('id', '=', $mm_id)->update(["matched" => true]);
 	    $mm = Matchmakings::find($mm_id);
 	    echo json_encode(array("response" => 1, "data" => $mm));
 	}
