@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'CreateGameTable' => $baseDir . '/database/migrations/2017_06_11_132615_create_game_table.php',
+    'CreateMatchmakingTable' => $baseDir . '/database/migrations/2017_06_12_150343_create_matchmaking_table.php',
     'CreateMoveTable' => $baseDir . '/database/migrations/2017_06_11_134520_create_move_table.php',
     'CreatePasswordResetsTable' => $baseDir . '/database/migrations/2014_10_12_100000_create_password_resets_table.php',
     'CreatePlayerTable' => $baseDir . '/database/migrations/2017_06_11_134513_create_player_table.php',

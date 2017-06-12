@@ -19,35 +19,28 @@ class MoveController extends Controller
         $players = Players::where('users_id', '=', $id)->orderBy('games_id', 'desc')->first();
         $games = Games::find($players->games_id);
 
-	//if($games->ended == 0){
-	    $last_move = Moves::where('games_id', '=', $games->id)->orderBy('turn', 'desc')->first();
-	    if( isset($last_move->players_id) ){
-		$is_player_turn = ((1-$players->first)%2 != $last_move->turn%2) ? 1 : 0;
-		$last_move['is_player_turn'] = $is_player_turn;
+	$last_move = Moves::where('games_id', '=', $games->id)->orderBy('turn', 'desc')->first();
+	if( isset($last_move->players_id) ){
+	    $is_player_turn = ((1-$players->first)%2 != $last_move->turn%2) ? 1 : 0;
+	    $last_move['is_player_turn'] = $is_player_turn;
 
-	        $moves = Moves::where('games_id', '=', $games->id)->orderBy('turn', 'asc')->get();
-	        $ended = $this->check_winning_play( $moves, $games->grid_size, $games->win_condition );
-		if( $ended == 1 & $is_player_turn == 1 | sizeof($moves) >= pow($games->grid_size,2) ){
-		    $res = Games::where('id', '=', $players->games_id)->update(["ended" => 1]);
-		    //if ( $is_player_turn == 0 ){
-		    //}
-		}
-		else if( $ended == 1 & $is_player_turn == 0 ){
-		    $res = Players::where(['games_id' => $players->games_id, 
-					   'users_id' => $id])->update(["winner" => 1]);
-		}
-
-	        $last_move["winning_play"] = $ended;
-
-		echo json_encode(array("response" => 1, "data" => $last_move));
+	    $moves = Moves::where('games_id', '=', $games->id)->orderBy('turn', 'asc')->get();
+	    $ended = $this->check_winning_play( $moves, $games->grid_size, $games->win_condition );
+	    if( $ended == 1 & $is_player_turn == 1 | sizeof($moves) >= pow($games->grid_size,2) ){
+	        $res = Games::where('id', '=', $players->games_id)->update(["ended" => 1]);
 	    }
-            else {
-                echo json_encode(array("response" => 0));
-            }
-	/*}
+	    else if( $ended == 1 & $is_player_turn == 0 ){
+	        $res = Players::where(['games_id' => $players->games_id, 
+	  				'users_id' => $id])->update(["winner" => 1]);
+	    }
+
+	    $last_move["winning_play"] = $ended;
+
+	    echo json_encode(array("response" => 1, "data" => $last_move));
+	}
         else {
             echo json_encode(array("response" => 0));
-        }*/
+        }
     }
 
     //set the player move
@@ -157,6 +150,23 @@ class MoveController extends Controller
 		}
 	    }
 	}
+
+	for ($b = $size; $b >= 1; $b--) {
+            for ($c = 1; $c <= $size; $c++) {
+                $y = $b;
+                $x = $c;
+                $count = 0;
+                $last_id = 0;
+                while( isset($table[$x][$y]) ) {
+                    if( $last_id != 0 & $last_id == $table[$x][$y] ) $count += 1;
+                    else $count = 1;
+                    $last_id = $table[$x][$y];
+                    if( $count == $win_condition ) return 1;
+                    $y--;
+                    $x++;
+                }
+            }
+        }
 
 	return 0;
     }
