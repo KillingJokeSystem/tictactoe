@@ -216,11 +216,11 @@ function select_box(box){
 function set_player_turn(){
     if( player.turn == 1 ){
 	$("#turnContainer").empty()
-	$("#turnContainer").append("<h1>Your Turn<h1>")
+	$("#turnContainer").append("<h1>Your Turn<div id='timer'></div><h1>")
     }
     else{
 	$("#turnContainer").empty()
-	$("#turnContainer").append("<h1>Opponent Turn<h1>")
+	$("#turnContainer").append("<h1>Opponent Turn<div id='timer'></div><h1>")
     }
 }
 
@@ -257,8 +257,10 @@ function check_server(){
 		    end_game( data["winning_play"] )
 		}
 		else if( data["response"] == 0 ){
+		    data = data["data"];
 		    game.turn = 0;
 		    set_player_turn();
+		    end_game( data["winning_play"] )
 		}
             }
         });

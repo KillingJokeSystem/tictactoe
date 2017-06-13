@@ -14,6 +14,18 @@ use App\Moves as Moves;
 
 class MoveController extends Controller
 {
+    private function get_turn_time_left($start, $end, $timeout){
+	$start_arr   = explode(" ", $start);
+	$end_arr     = explode(" ", $end);
+	$start_t_arr = explode(":", $start_arr[1]);
+	$end_t_arr   = explode(":", $end_arr[1]);
+	if( $end_arr[0] == $start_arr[0] ){
+	    $start_sec = $start_t_arr[0]*3600+$start_t_arr[1]*60+$start_t_arr[2];
+	    $end_sec   = $end_t_arr[0]*3600+$end_t_arr[1]*60+$end_t_arr[2];
+	    return $timeout - ( $end_sec - $start_sec );
+	}
+    }
+
     public function check_status(){
 	$id = Auth::id();
         $players = Players::where('users_id', '=', $id)->orderBy('games_id', 'desc')->first();
@@ -26,21 +38,38 @@ class MoveController extends Controller
 
 	    $moves = Moves::where('games_id', '=', $games->id)->orderBy('turn', 'asc')->get();
 	    $ended = $this->check_winning_play( $moves, $games->grid_size, $games->win_condition );
-	    if( $ended == 1 & $is_player_turn == 1 | sizeof($moves) >= pow($games->grid_size,2) ){
+	    $end_timeout = $this->get_turn_time_left($last_move->played_at, date("Y-m-d H:i:s"), $games->turn_timeout);
+	    if( ($ended == 1 & $is_player_turn == 1 | sizeof($moves) >= pow($games->grid_size,2)) & $end_timeout > 0 ){
 	        $res = Games::where('id', '=', $players->games_id)->update(["ended" => 1]);
 		if( sizeof($moves) >= pow($games->grid_size,2) ) $ended = -1;
 	    }
-	    else if( $ended == 1 & $is_player_turn == 0 ){
+	    else if( $ended == 1 & $is_player_turn == 0 & $end_timeout > 0 ){
 	        $res = Players::where(['games_id' => $players->games_id, 
 	  				'users_id' => $id])->update(["winner" => 1]);
 	    }
+	    else if ( $end_timeout <= 0 & $is_player_turn == 1 ) {
+	        $res = Games::where('id', '=', $players->games_id)->update(["ended" => 1]);
+		$ended = 1;
+	    }
+	    else if ( $end_timeout <= 0 & $is_player_turn == 0 ) {
+	        $res = Games::where('id', '=', $players->games_id)->update(["ended" => 1]);
+		$ended = 1;
+	    }
 
 	    $last_move["winning_play"] = $ended;
+	    $last_move["time_left"] = $end_timeout;
 
 	    echo json_encode(array("response" => 1, "data" => $last_move));
 	}
         else {
-            echo json_encode(array("response" => 0));
+	    $end_timeout = $this->get_turn_time_left($games->start_date, date("Y-m-d H:i:s"), $games->turn_timeout);
+	    $ended = 0;
+	    if ( $end_timeout <= 0 ){
+		$res = Games::where('id', '=', $players->games_id)->update(["ended" => 1]);
+		$ended = 1;
+	    }
+	    $last_move["winning_play"] = $ended;
+            echo json_encode(array("response" => 0, "data" => array("time_left" => $end_timeout, "winning_play" => $ended)));
         }
     }
 
