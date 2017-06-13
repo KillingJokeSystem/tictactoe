@@ -213,6 +213,11 @@ function select_box(box){
     }
 }
 
+function update_timer(time_left){
+    $("#timer").empty()
+    $("#timer").append("Remaining time : "+time_left+"s")
+}
+
 function set_player_turn(){
     if( player.turn == 1 ){
 	$("#turnContainer").empty()
@@ -254,13 +259,15 @@ function check_server(){
 		    check_grid($("#column"+data["y"]+"-"+data["x"]));
 		    player.turn = data["is_player_turn"];
 		    set_player_turn();
-		    end_game( data["winning_play"] )
+		    update_timer(data["time_left"]);
+		    end_game( data["winning_play"] );
 		}
 		else if( data["response"] == 0 ){
 		    data = data["data"];
 		    game.turn = 0;
 		    set_player_turn();
-		    end_game( data["winning_play"] )
+		    update_timer(data["time_left"]);
+		    end_game( data["winning_play"] );
 		}
             }
         });
